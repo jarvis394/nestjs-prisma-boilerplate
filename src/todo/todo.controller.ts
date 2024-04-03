@@ -17,9 +17,7 @@ import {
   TodoGetAllRes,
   TodoGetRes,
   TodoDeleteRes,
-  CreateTodoReq,
   CreateTodoRes,
-  UpdateTodoReq,
   UpdateTodoRes,
 } from 'src/types/api/Todo'
 import { CreateTodoDto } from './dto/create-todo.dto'
