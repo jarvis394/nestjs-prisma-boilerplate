@@ -4,7 +4,7 @@ import { AppModule } from './app/app.module'
 import { ConfigService } from './config/config.service'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
-import { PrismaClientExceptionFilter } from 'nestjs-prisma'
+import { PrismaClientExceptionFilter } from './filters/prisma-client-exception.filter'
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule)
