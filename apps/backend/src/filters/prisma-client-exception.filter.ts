@@ -13,7 +13,7 @@ export class PrismaClientExceptionFilter extends BaseExceptionFilter {
 
     response.status(status).json({
       error: true,
-      statusCode: status,
+      code: status,
       message: exception.message,
     })
   }
