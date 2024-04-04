@@ -12,16 +12,26 @@ model User {
   email        String  @unique
   password     String
   refreshToken String?
-  todos        Todo[]
+  notes        Note[]
+  Tag          Tag[]
 }
 
-model Todo {
+model Note {
   id          Int      @id @default(autoincrement())
   title       String
-  description String?  @default("")
-  completed   Boolean  @default(false)
+  markdown    String   @default("")
+  tags        Tag[]
   dateCreated DateTime @default(now())
   dateUpdated DateTime @default(now())
-  User        User?    @relation(fields: [userId], references: [id])
-  userId      Int?
+  User        User     @relation(fields: [userId], references: [id])
+  userId      Int
+}
+
+model Tag {
+  id     Int     @id @default(autoincrement())
+  label  String
+  icon   String?
+  notes  Note[]
+  User   User?   @relation(fields: [userId], references: [id])
+  userId Int?
 }
