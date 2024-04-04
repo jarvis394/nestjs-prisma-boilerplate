@@ -45,9 +45,13 @@ export class NoteController {
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   @ApiBearerAuth()
-  async getNote(@Param('id') id: string): Promise<NoteGetRes> {
+  async getNote(
+    @Request() req: RequestWithUser,
+    @Param('id') id: string
+  ): Promise<NoteGetRes> {
     const note = await this.noteService.note({
       id: Number(id),
+      userId: req.user.userId,
     })
     return { note }
   }
@@ -55,8 +59,14 @@ export class NoteController {
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @ApiBearerAuth()
-  async delete(@Param('id') id: string): Promise<NoteDeleteRes> {
-    await this.noteService.deleteNote({ id: Number(id) })
+  async delete(
+    @Request() req: RequestWithUser,
+    @Param('id') id: string
+  ): Promise<NoteDeleteRes> {
+    await this.noteService.deleteNote({
+      id: Number(id),
+      userId: req.user.userId,
+    })
     return { ok: true }
   }
 
@@ -75,12 +85,14 @@ export class NoteController {
   @Post(':id/update')
   @ApiBearerAuth()
   async updateNote(
+    @Request() req: RequestWithUser,
     @Param('id') id: string,
     @Body() data: UpdateNoteDto
   ): Promise<UpdateNoteRes> {
     const note = await this.noteService.updateNote({
       where: {
         id: Number(id),
+        userId: req.user.userId,
       },
       data,
     })
@@ -91,10 +103,15 @@ export class NoteController {
   @Post(':id/addTag')
   @ApiBearerAuth()
   async addNoteTag(
+    @Request() req: RequestWithUser,
     @Param('id') id: string,
     @Body() data: NoteTagDto
   ): Promise<AddNoteTagRes> {
-    const note = await this.noteService.addNoteTag(Number(id), data.tagId)
+    const note = await this.noteService.addNoteTag({
+      noteId: Number(id),
+      userId: req.user.userId,
+      tagId: data.tagId,
+    })
     return { note }
   }
 
@@ -102,10 +119,15 @@ export class NoteController {
   @Post(':id/removeTag')
   @ApiBearerAuth()
   async removeNoteTag(
+    @Request() req: RequestWithUser,
     @Param('id') id: string,
     @Body() data: NoteTagDto
   ): Promise<RemoveNoteTagRes> {
-    const note = await this.noteService.removeNoteTag(Number(id), data.tagId)
+    const note = await this.noteService.removeNoteTag({
+      noteId: Number(id),
+      userId: req.user.userId,
+      tagId: data.tagId,
+    })
     return { note }
   }
 }

@@ -41,9 +41,13 @@ export class TagController {
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   @ApiBearerAuth()
-  async getTag(@Param('id') id: string): Promise<TagGetRes> {
+  async getTag(
+    @Request() req: RequestWithUser,
+    @Param('id') id: string
+  ): Promise<TagGetRes> {
     const tag = await this.tagService.tag({
       id: Number(id),
+      userId: req.user.userId,
     })
     return { tag }
   }
@@ -51,8 +55,11 @@ export class TagController {
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @ApiBearerAuth()
-  async deleteTag(@Param('id') id: string): Promise<TagDeleteRes> {
-    await this.tagService.deleteTag({ id: Number(id) })
+  async deleteTag(
+    @Request() req: RequestWithUser,
+    @Param('id') id: string
+  ): Promise<TagDeleteRes> {
+    await this.tagService.deleteTag({ id: Number(id), userId: req.user.userId })
     return { ok: true }
   }
 
@@ -71,6 +78,7 @@ export class TagController {
   @Post(':id/update')
   @ApiBearerAuth()
   async updateTag(
+    @Request() req: RequestWithUser,
     @Param('id') id: string,
     @Body() data: CreateTagDto
   ): Promise<UpdateTagRes> {
@@ -78,6 +86,7 @@ export class TagController {
       data,
       where: {
         id: Number(id),
+        userId: req.user.userId,
       },
     })
     return { tag }

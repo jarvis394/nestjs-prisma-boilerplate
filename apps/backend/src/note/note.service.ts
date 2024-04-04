@@ -95,21 +95,30 @@ export class NoteService {
     })
 
     if (data.tags) {
-      note = await this.addNoteTags(note.id, data.tags)
+      note = await this.addNoteTags({
+        noteId: note.id,
+        tagsIds: data.tags,
+        userId,
+      })
     }
 
     return note
   }
 
-  async addNoteTag(noteId: Note['id'], tagId: Tag['id']): Promise<Note> {
+  async addNoteTag(params: {
+    noteId: Note['id']
+    userId: User['id']
+    tagId: Tag['id']
+  }): Promise<Note> {
     return await this.prisma.note.update({
       where: {
-        id: noteId,
+        id: params.noteId,
+        userId: params.userId,
       },
       data: {
         tags: {
           connect: {
-            id: tagId,
+            id: params.tagId,
           },
         },
       },
@@ -119,15 +128,20 @@ export class NoteService {
     })
   }
 
-  async removeNoteTag(noteId: Note['id'], tagId: Tag['id']): Promise<Note> {
+  async removeNoteTag(params: {
+    noteId: Note['id']
+    userId: User['id']
+    tagId: Tag['id']
+  }): Promise<Note> {
     return await this.prisma.note.update({
       where: {
-        id: noteId,
+        id: params.noteId,
+        userId: params.userId,
       },
       data: {
         tags: {
           disconnect: {
-            id: tagId,
+            id: params.tagId,
           },
         },
       },
@@ -137,17 +151,19 @@ export class NoteService {
     })
   }
 
-  async addNoteTags(
-    noteId: Note['id'],
+  async addNoteTags(params: {
+    noteId: Note['id']
+    userId: User['id']
     tagsIds: Array<Tag['id']>
-  ): Promise<Note> {
+  }): Promise<Note> {
     return await this.prisma.note.update({
       where: {
-        id: noteId,
+        id: params.noteId,
+        userId: params.userId,
       },
       data: {
         tags: {
-          connect: tagsIds.map((id) => ({ id })),
+          connect: params.tagsIds.map((id) => ({ id })),
         },
       },
       include: {
@@ -156,17 +172,18 @@ export class NoteService {
     })
   }
 
-  async removeNoteTags(
-    noteId: Note['id'],
+  async removeNoteTags(params: {
+    noteId: Note['id']
+    userId: User['id']
     tagsIds: Array<Tag['id']>
-  ): Promise<Note> {
+  }): Promise<Note> {
     return await this.prisma.note.update({
       where: {
-        id: noteId,
+        id: params.noteId,
       },
       data: {
         tags: {
-          disconnect: tagsIds.map((id) => ({ id })),
+          disconnect: params.tagsIds.map((id) => ({ id })),
         },
       },
       include: {
