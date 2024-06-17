@@ -120,4 +120,14 @@ export class UserService {
 
     return this.serializeUser(user)
   }
+
+  async getByEmail(email: User['email']): Promise<SerializedUser> {
+    const user = await this.user({ email })
+
+    if (!user) {
+      throw new NotFoundException('User not found')
+    }
+
+    return this.serializeUser(user)
+  }
 }
